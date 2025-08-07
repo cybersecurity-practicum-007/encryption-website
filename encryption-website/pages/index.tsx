@@ -94,15 +94,19 @@ export default function Home() {
         "
       >
         <p className="text-2xl font-semibold text-black">Enter your text:</p>
-        <input
-          type="text"
+        {/* Used drop in library from react for handling the text input growth. 
+         * <input> can't grow tall and stays as one row, 
+         * so we either have to use <textarea> auto resize with a hook, or use TextareaAutosize
+         */}
+        <TextareaAutosize
+          minRows={1}
+          maxRows={6}
           placeholder="Type here…"
           className="
             w-150
-            h-50
             px-4
-            pt-4 pb-1
-            leading-none
+            py-2
+            resize-none
             rounded-lg
             bg-white bg-opacity-80 text-gray-900
             placeholder-gray-600
