@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import TextareaAutosize from "react-textarea-autosize"
 import Image from "next/image";
 
 interface Star {
@@ -72,7 +73,7 @@ export default function Home() {
         alt="Cacti"
         width={500}
         height={200}
-        className="absolute bottom-0 left-370 -translate-x-1/2 pointer-events-none"
+        className="absolute bottom-0 right-0 pointer-events-none"
       />
       <Image
         src="/static/images/sun.svg"
