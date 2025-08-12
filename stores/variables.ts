@@ -35,6 +35,7 @@ type CryptoState = {
 export const useCryptoStore = create<CryptoState>((set, get) => ({
   plaintext: "",
   isEncrypt: true,
+  //TODO: change it to the method get from the dropdown menu
   methodStr: "rot13",
   result: "",
   isBusy: false,

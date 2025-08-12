@@ -23,6 +23,7 @@ export default function Home() {
   const isBusy      = useCryptoStore((s: { isBusy: any; }) => s.isBusy);
   const error       = useCryptoStore((s: { error: any; }) => s.error);
   const isEncrypt   = useCryptoStore((s: { isEncrypt: any; }) => s.isEncrypt);
+  //TODO: connect it to the dropdown menu to take the method string
   const methodStr   = useCryptoStore((s: { methodStr: any; }) => s.methodStr);
 
 
