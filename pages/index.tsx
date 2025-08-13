@@ -131,7 +131,7 @@ export default function Home() {
           "
         />
         <div className="flex space-x-4">
-          <button onClick={() => runCrypto(true)} className="px-6 py-2 bg-yellow-200 rounded-full font-medium hover:bg-yellow-300 transition">
+          <button onClick={() => runCrypto(true)} className="px-6 py-2 bg-yellow-200 rounded-full font-medium text-black hover:bg-yellow-300 transition">
             Encrypt
           </button>
           <button onClick={() => runCrypto(false)} className="px-6 py-2 bg-white text-gray-800 rounded-full font-medium hover:bg-gray-100 transition">
@@ -148,9 +148,21 @@ export default function Home() {
             {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
 
             {!isBusy && !error && (
-              <pre className="mt-2 bg-white/80 p-3 rounded-lg break-all">
-                {result || " "}
-              </pre>
+              <TextareaAutosize
+                minRows={1}
+                maxRows={6}
+                value={result || " "}
+                className="
+                  w-150
+                  px-4
+                  py-2
+                  resize-none
+                  rounded-lg
+                  bg-white bg-opacity-80 text-gray-900
+                  placeholder-gray-600
+                  focus:outline-none focus:ring-2 focus:ring-pink-300
+                  "
+              />
             )}
           </div>
       </div>
