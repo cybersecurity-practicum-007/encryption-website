@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import Image from "next/image";
 import { useCryptoStore } from "@/stores/variables";
+import CipherDropdown from "./CipherDropdown";
 
 interface Star {
   x: number;
@@ -25,6 +26,7 @@ export default function Home() {
   const isEncrypt   = useCryptoStore((s: { isEncrypt: any; }) => s.isEncrypt);
   //TODO: connect it to the dropdown menu to take the method string
   const methodStr   = useCryptoStore((s: { methodStr: any; }) => s.methodStr);
+  const setMethodStr = useCryptoStore((s) => s.setMethodStr)
 
 
   useEffect(() => {
@@ -130,11 +132,26 @@ export default function Home() {
             focus:outline-none focus:ring-2 focus:ring-pink-300
           "
         />
-        <div className="flex space-x-4">
-          <button onClick={() => runCrypto(true)} className="px-6 py-2 bg-yellow-200 rounded-full font-medium text-black hover:bg-yellow-300 transition">
+        {/* Cipher selection and action buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+          {/* Fancy dropdown matching the Figma design */}
+          <CipherDropdown />
+          {/*
+              The simple <select> version of the cipher picker has been removed from the compiled
+              code.  See the project README for an example implementation if you'd like to
+              substitute a basic dropdown instead of the custom component.
+          */}
+          {/* Action buttons */}
+          <button
+            onClick={() => runCrypto(true)}
+            className="px-6 py-2 bg-yellow-200 rounded-full font-medium text-black hover:bg-yellow-300 transition"
+          >
             Encrypt
           </button>
-          <button onClick={() => runCrypto(false)} className="px-6 py-2 bg-white text-gray-800 rounded-full font-medium hover:bg-gray-100 transition">
+          <button
+            onClick={() => runCrypto(false)}
+            className="px-6 py-2 bg-white text-gray-800 rounded-full font-medium hover:bg-gray-100 transition"
+          >
             Decrypt
           </button>
         </div>
