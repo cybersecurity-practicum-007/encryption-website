@@ -1,19 +1,15 @@
 // stores/variables.ts
 import { create } from "zustand";
+import atbash from "../crypto/Atbash";
+import rot13 from "../crypto/ROT13";
 
-// Common interface your crypto modules implement
-export interface CryptoMethod {
-  encrypt: (s: string) => Promise<string>;
-  decrypt: (s: string) => Promise<string>;
-}
+//Put your cipher here and it should work.
+const CIPHERS = {
+  rot13,
+  atbash,
+};
 
-// Dynamic loaders for each method module
-const methodLoaders = {
-    rot13: () => import("../crypto/ROT13").then(m => m.default),
-
-} satisfies Record<string, () => Promise<CryptoMethod>>;
-
-type MethodName = keyof typeof methodLoaders;
+export type MethodName = keyof typeof CIPHERS;
 
 type CryptoState = {
   plaintext: string;
@@ -35,7 +31,6 @@ type CryptoState = {
 export const useCryptoStore = create<CryptoState>((set, get) => ({
   plaintext: "",
   isEncrypt: true,
-  //TODO: change it to the method get from the dropdown menu
   methodStr: "rot13",
   result: "",
   isBusy: false,
@@ -44,24 +39,27 @@ export const useCryptoStore = create<CryptoState>((set, get) => ({
   setPlaintext: (plaintext: any) => set({ plaintext }),
   setIsEncrypt: (isEncrypt: any) => set({ isEncrypt }),
   toggleMode: () => set((s: { isEncrypt: any; }) => ({ isEncrypt: !s.isEncrypt })),
-  setMethodStr: (methodStr: any) => set({ methodStr }),
+  setMethodStr: (m) => set({ methodStr: m }),
 
   runCrypto: async (forceMode: any) => {
     const { plaintext, isEncrypt: currentMode, methodStr } = get();
+    const cipher = CIPHERS[methodStr];
+    if (!cipher) {
+      set({ error: `Unknown cipher: ${String(methodStr)}` });
+      return;
+    }
     const isEncrypt = typeof forceMode === "boolean" ? forceMode : currentMode;
 
-    set({ isBusy: true, error: undefined });
     try {
-      const impl = await methodLoaders[methodStr]();
-      const out = isEncrypt
-        ? await impl.encrypt(plaintext)
-        : await impl.decrypt(plaintext);
-
-      // Persist mode we actually ran with
-      set({ result: out, isEncrypt });
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Crypto error";
-      set({ error: msg });
+      set({ isBusy: true, error: undefined });
+      const output = isEncrypt
+        ? await cipher.encrypt(plaintext)
+        : await cipher.decrypt(plaintext);
+      set({ result: output });
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Encryption error";
+      set({ error: message });
     } finally {
       set({ isBusy: false });
     }
