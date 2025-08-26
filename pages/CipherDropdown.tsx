@@ -2,13 +2,14 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useCryptoStore } from "@/stores/variables";
+import { createPortal } from "react-dom";
 
 // Define the structure of each selectable cipher.  Disabled entries will appear
 // greyed‑out and cannot be selected until their implementations are added.
 type Option = { label: string; value: string; disabled: boolean };
 
 // Options are grouped by high level category (classical vs modern), then by
-// subcategory, and finally by family.  Only rot13 is currently active for right now.
+// subcategory, and finally by family.  
 const cipherOptions: {
   classical: {
     substitution: {
@@ -31,8 +32,8 @@ const cipherOptions: {
       monoalphabetic: [
         { label: "Rot13 (Caesar cipher)", value: "rot13", disabled: false },
         { label: "Caesar cipher", value: "caesar", disabled: true },
-        { label: "Affine cipher", value: "affine", disabled: true },
-        { label: "Atbash cipher", value: "atbash", disabled: true },
+        { label: "Affine cipher", value: "affine", disabled: false },
+        { label: "Atbash cipher", value: "atbash", disabled: false },
       ],
       polyalphabetic: [
         { label: "Vigenère cipher", value: "vigenere", disabled: true },
@@ -113,19 +114,7 @@ export default function CipherDropdown() {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close the dropdown if the user clicks outside of the component
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+ 
 
   /**
    * Handle a user selecting a cipher option.  When called, this will update
@@ -172,23 +161,26 @@ export default function CipherDropdown() {
         </svg>
       </button>
       {/* Popover */}
-      {open && (
+      {open && createPortal(
+        <>
+        {/* Full‑page blurred backdrop */}
         <div
-          className="
-             absolute
-             mt-2
-             p-4
-             bg-white
-             bg-opacity-90
-             rounded-lg
-             shadow-xl
-             z-50
-             min-w-[29rem]
-             backdrop-blur-md
-           "
-        >
+          className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        />
+        <div className="fixed 
+          z-50 
+          top-1/2 
+          left-1/2 
+          -translate-x-1/2 
+          -translate-y-1/2 
+          p-10 bg-white 
+          bg-opacity-90 
+          rounded-lg 
+          shadow-xl 
+          w-[59.5rem]">
           {/* Tabs */}
-          <div className="flex mb-3 space-x-2 justify-center">
+          <div className="flex mb-12 space-x-2 justify-center">
             {(["classical", "modern"] as const).map((tab) => (
               <button
                 key={tab}
@@ -196,8 +188,8 @@ export default function CipherDropdown() {
                 onClick={() => setActiveTab(tab)}
                 className={
                   `
-                   px-3 py-1 rounded-full text-sm font-medium
-                   ${activeTab === tab ? "bg-black text-white" : "bg-gray-200 text-gray-800"}
+                   px-20 py-1 rounded-full text-xl font-medium
+                   ${activeTab === tab ? "bg-black text-white border-2 border-amber-400 p-2" : "bg-gray-300 text-black"}
                  `
                 }
               >
@@ -208,18 +200,18 @@ export default function CipherDropdown() {
           {/* Scrollable content */}
           <div className="max-h-80 overflow-y-auto pr-1">
             {activeTab === "classical" && (
-              <div className="space-y-3">
+              <div className="flex gap-10">
                 {/* Substitution */}
-                <div>
-                  <p className="mb-1 text-gray-800 font-semibold">Substitution</p>
-                  <div className="flex flex-wrap gap-2">
+                <div flex-1 className="border-2 border-amber-400 p-4 rounded-lg ">
+                  <p className="mb-5 text-black font-semibold text-3xl text-center">Substitution</p>
+                  <div className="flex flex-wrap gap-2 ">
                     {Object.entries(cipherOptions.classical.substitution).map(
                       ([family, options]) => (
                         <div
                           key={family}
                           className="rounded-md overflow-hidden bg-gray-50 border border-gray-300"
                         >
-                          <div className="bg-black text-white px-2 py-1 text-xs capitalize">
+                          <div className="bg-black text-white px-2 py-1 text-lg text-center capitalize">
                             {family}
                           </div>
                           <div className="flex flex-col">
@@ -233,10 +225,10 @@ export default function CipherDropdown() {
                                 }}
                                 className={
                                   `
-                                   px-3 py-1 text-sm text-left
+                                   px-3 py-1 text-sl text-left
                                    ${opt.disabled
-                                     ? "cursor-not-allowed text-gray-500 bg-gray-200"
-                                     : "cursor-pointer hover:bg-purple-100 bg-white text-gray-800"}
+                                     ? "cursor-not-allowed text-gray-400 bg-gray-200"
+                                     : "cursor-pointer hover:bg-black hover:text-purple-400 bg-white text-gray-900 "}
                                  `
                                 }
                               >
@@ -250,8 +242,8 @@ export default function CipherDropdown() {
                   </div>
                 </div>
                 {/* Transposition */}
-                <div>
-                  <p className="mb-1 text-gray-800 font-semibold">Transposition</p>
+                <div flex-1 className="border-2 border-amber-400 p-4 rounded-lg">
+                  <p className="mb-5 text-black font-semibold text-3xl text-center" >Transposition</p>
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(cipherOptions.classical.transposition).map(
                       ([family, options]) => (
@@ -259,7 +251,7 @@ export default function CipherDropdown() {
                           key={family}
                           className="rounded-md overflow-hidden bg-gray-50 border border-gray-300"
                         >
-                          <div className="bg-black text-white px-2 py-1 text-xs capitalize">
+                          <div className="bg-black text-white px-2 py-1 text-lg text-center capitalize">
                             {family}
                           </div>
                           <div className="flex flex-col">
@@ -273,10 +265,10 @@ export default function CipherDropdown() {
                                 }}
                                 className={
                                   `
-                                   px-3 py-1 text-sm text-left
+                                   px-3 py-1 text-sl text-left
                                    ${opt.disabled
-                                     ? "cursor-not-allowed text-gray-500 bg-gray-200"
-                                     : "cursor-pointer hover:bg-purple-100 bg-white text-gray-800"}
+                                    ? "cursor-not-allowed text-gray-400 bg-gray-200"
+                                    : "cursor-pointer hover:bg-black hover:text-purple-400 bg-white text-gray-900 "}
                                  `
                                 }
                               >
@@ -349,6 +341,8 @@ export default function CipherDropdown() {
             )}
           </div>
         </div>
+        </>, 
+        document.body
       )}
     </div>
   );
