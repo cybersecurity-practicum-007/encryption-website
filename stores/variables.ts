@@ -2,11 +2,13 @@
 import { create } from "zustand";
 import atbash from "../crypto/Atbash";
 import rot13 from "../crypto/ROT13";
+import playfair from "../crypto/Playfair"
 
 //Put your cipher here and it should work.
 const CIPHERS = {
   rot13,
   atbash,
+  playfair
 };
 
 export type MethodName = keyof typeof CIPHERS;

@@ -40,7 +40,7 @@ const cipherOptions: {
         { label: "Beaufort cipher", value: "beaufort", disabled: true },
       ],
       polygraphic: [
-        { label: "Playfair cipher", value: "playfair", disabled: true },
+        { label: "Playfair cipher", value: "playfair", disabled: false },
         { label: "Hill cipher", value: "hill", disabled: true },
       ],
     },
