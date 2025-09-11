@@ -28,6 +28,11 @@ export default function Home() {
   const methodStr   = useCryptoStore((s: { methodStr: any; }) => s.methodStr);
   const setMethodStr = useCryptoStore((s) => s.setMethodStr)
 
+  const affineA = useCryptoStore((s: { affineA: any; }) => s.affineA);
+  const setAffineA = useCryptoStore((s) => s.setAffineA);
+  const affineB = useCryptoStore((s: { affineB: any; }) => s.affineB);
+  const setAffineB = useCryptoStore((s) => s.setAffineB);
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -136,12 +141,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
           {/* Fancy dropdown matching the Figma design */}
           <CipherDropdown />
-          {/*
-              The simple <select> version of the cipher picker has been removed from the compiled
-              code.  See the project README for an example implementation if you'd like to
-              substitute a basic dropdown instead of the custom component.
-          */}
-          {/* Action buttons */}
+          { /* Action buttons */ }
           <button
             onClick={() => runCrypto(true)}
             className="px-6 py-2 bg-yellow-200 rounded-full font-medium text-black hover:bg-yellow-300 transition"
@@ -155,6 +155,25 @@ export default function Home() {
             Decrypt
           </button>
         </div>
+        {/* Affine cipher parameter inputs, shown only when affine cipher is selected */}
+        {methodStr === "affine" && (
+          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-4">
+            <input
+              type="number"
+              value={affineA}
+              onChange={(e) => setAffineA(parseInt(e.target.value) || 0)}
+              placeholder="Enter multiplier a"
+              className="w-32 px-3 py-2 rounded-md border border-gray-300"
+            />
+            <input
+              type="number"
+              value={affineB}
+              onChange={(e) => setAffineB(parseInt(e.target.value) || 0)}
+              placeholder="Enter shift b"
+              className="w-32 px-3 py-2 rounded-md border border-gray-300"
+            />
+          </div>
+        )}
         <div className="mt-4 w-full max-w-[38rem]">
             <p className="text-sm text-gray-800">
               {isEncrypt ? "Encrypted" : "Decrypted"} with{" "}
